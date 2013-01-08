@@ -61,7 +61,9 @@ else
     echo -e "\n\tFiles found:";
     echo "$RESULTLOOKINGTARGETS";
     echo -e "\nDo you want to delete these files?\n";
-    ANSWER="0"; read -p "Answer (y/n): " -n 1 ANSWER;
+    ANSWER="0";
+    printf "Answer (y/n): ";
+    read ANSWER;
     if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ] ; then
         find $LOCATION -name "SAFETMP*vmdk" ! -name "*-flat.vmdk" ! -name "*-delta.vmdk" | while read TODELETE ; do
         vmkfstools -U  "$TODELETE" ; done;
@@ -138,7 +140,7 @@ findAndMakeDiskThin () {
     file "$DPATH/$DNAMEFLAT"
 
     # Ask for confirmation
-    echo -en "\n-- Convert to thin? (y/n): "; INPUT="0"; read -n 1 INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
+    echo -en "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
         echo ""; #echo -e "yes do it\n" ;
 
         # Rename source
