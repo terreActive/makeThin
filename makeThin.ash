@@ -35,9 +35,13 @@
 # For that reason some of these functions can not be used in other scripts.
 #
 #==== Auxiliary Functions ====================================================
-SizeH() { ls -lh "$1" | awk  '{ print  $5   }'; }
+SizeH() {
+    ls -lh "$1" | awk  '{ print  $5   }';
+}
 #------------------
-isThin() { result=`grep -i thinProvisioned "$1"` ; if [ "$result" = 'ddb.thinProvisioned = "1"' ] ; then echo yes; else echo no; fi; }
+isThin() {
+    result=`grep -i thinProvisioned "$1"` ; if [ "$result" = 'ddb.thinProvisioned = "1"' ] ; then echo yes; else echo no; fi;
+}
 #------------------
 isBaseDisk() {
     # Ensure that the disk is both, base disk (no snapshot) and a virtual disk (not an RDM)
