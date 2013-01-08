@@ -137,7 +137,7 @@ findAndMakeDiskThin() {
 
     # Ask for confirmation
     printf "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
-        echo ""; #echo -e "yes do it\n" ;
+        echo "";
 
         # Rename source
         echo "Will run: vmkfstools -E \"$VDISK\" \"$DPATH/SAFETMP$DNAME.vmdk\""
@@ -151,7 +151,6 @@ findAndMakeDiskThin() {
         printf "\n Visual verification\n"
         ls -l "$DPATH/SAFETMP$DNAME.vmdk" "$DPATH/SAFETMP$DNAME-flat.vmdk" "$DPATH/$DNAME.vmdk" "$DPATH/$DNAME-flat.vmdk"
     else
-        #echo "DON'T do it" ;
         echo ""
     fi;    # Confirmation to convert
 
