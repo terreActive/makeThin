@@ -40,14 +40,25 @@ SizeH() {
 }
 #------------------
 isThin() {
-    result=`grep -i thinProvisioned "$1"` ; if [ "$result" = 'ddb.thinProvisioned = "1"' ] ; then echo yes; else echo no; fi;
+    result=`grep -i thinProvisioned "$1"` ;
+    if [ "$result" = 'ddb.thinProvisioned = "1"' ] ;
+    then
+        echo yes;
+    else
+        echo no;
+    fi;
 }
 #------------------
 isBaseDisk() {
     # Ensure that the disk is both, base disk (no snapshot) and a virtual disk (not an RDM)
     result=`grep -i parentCID "$1"`;
     result2=`grep -i createType "$1"`;
-    if [ "$result" = "parentCID=ffffffff"  -a  "$result2" = 'createType="vmfs"' ] ; then echo "yes"; else echo "no"; fi;
+    if [ "$result" = "parentCID=ffffffff"  -a  "$result2" = 'createType="vmfs"' ] ;
+    then
+        echo "yes";
+    else
+        echo "no";
+    fi;
 }
 #============= cleanupSAFETMP =================================================
 cleanupSAFETMP() {
@@ -55,12 +66,18 @@ cleanupSAFETMP() {
     # Find SAFETMP*vmdk files recursively under the path specified and ask you for confirmation before deleting them.
 
     # If no argument provided, then look where we are
-    if [ "$1" != "" ]; then LOCATION="$*"; else LOCATION="."; fi;
+    if [ "$1" != "" ];
+    then
+        LOCATION="$*";
+    else
+        LOCATION=".";
+    fi;
 
     # Check if there is something to clean up.
     RESULTLOOKINGTARGETS=`find $LOCATION -name "SAFETMP*vmdk"`;
     # Decide
-    if [ "$RESULTLOOKINGTARGETS" = "" ] ; then
+    if [ "$RESULTLOOKINGTARGETS" = "" ] ;
+    then
         printf "\nNo SAFETMP*vmdk files found under the specified location (default is \".\"). Nothing to clean up. Exiting.\n\n";
     else
         printf "\n\tFiles found:\n";
@@ -69,9 +86,12 @@ cleanupSAFETMP() {
         ANSWER="0";
         printf "Answer (y/n): ";
         read ANSWER;
-        if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ] ; then
-            find $LOCATION -name "SAFETMP*vmdk" ! -name "*-flat.vmdk" ! -name "*-delta.vmdk" | while read TODELETE ; do
-            vmkfstools -U  "$TODELETE" ; done;
+        if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ] ;
+        then
+            find $LOCATION -name "SAFETMP*vmdk" ! -name "*-flat.vmdk" ! -name "*-delta.vmdk" | while read TODELETE ;
+            do
+                vmkfstools -U  "$TODELETE" ;
+            done;
             printf "\nDone.\n\n";
         else
             printf "\nNothing deleted.\n\n";
@@ -88,17 +108,22 @@ findBaseDisks() {
     ORIGINALLOCATION=`pwd`;
 
     # If no argument provided, then look where we are
-    if [ "$1" != "" ]; then
+    if [ "$1" != "" ];
+    then
         LOCATION="$*";
     else
         LOCATION=".";
     fi;
 
     # Find the -flat.vmdk files and from them the .vmdk and display if it exists.
-    find $LOCATION -iname "*-flat.vmdk" | while read DISKPATH; do
+    find $LOCATION -iname "*-flat.vmdk" | while read DISKPATH;
+    do
         DPATH=`dirname  "$DISKPATH"`;
         DNAME=`basename "$DISKPATH" "-flat.vmdk"`;
-        if [ -e "$DPATH/$DNAME.vmdk" ]; then echo "$DPATH/$DNAME.vmdk"; fi;
+        if [ -e "$DPATH/$DNAME.vmdk" ];
+        then
+            echo "$DPATH/$DNAME.vmdk";
+        fi;
     done;
 }
 #============= findAndMakeDiskThin = makeThin ======================================
@@ -116,33 +141,50 @@ findAndMakeDiskThin() {
         ORIGINALLOCATION=`pwd`;
 
         # If no argument provided, then look where we are
-        if [ "$1" != "" ]; then
+        if [ "$1" != "" ];
+        then
             LOCATION="$*";
         else
             LOCATION=".";
         fi;
 
-        findBaseDisks "$LOCATION" | while read VDISK ; do
+        findBaseDisks "$LOCATION" | while read VDISK ;
+        do
 
             # Check it exists
-            if [ ! -e "$VDISK" ]; then echo "$VDISK file not found."; else
+            if [ ! -e "$VDISK" ];
+            then
+                echo "$VDISK file not found.";
+            else
                 printf "\n-----------------------------------------------------------------------------\n\n"
 
                 # Check that the disk is thin before continuing
-                if [ "`isThin \"$VDISK\"`" = "yes" ]; then echo "$VDISK is thinProvisioned, skipping." ; else
+                if [ "`isThin \"$VDISK\"`" = "yes" ];
+                then
+                    echo "$VDISK is thinProvisioned, skipping." ;
+                else
 
                     # Check that the disk is a Base Disk (not snapshot/RDM) before continuing
-                    if [ "`isBaseDisk \"$VDISK\"`" = "no" ]; then echo "$VDISK is a snapshot and/or an RDM, skipping." ; else
+                    if [ "`isBaseDisk \"$VDISK\"`" = "no" ];
+                    then
+                        echo "$VDISK is a snapshot and/or an RDM, skipping." ;
+                    else
 
                         # Display its size and free space on Datastore
                         DPATH=`dirname  "$VDISK"`;
                         DNAME=`basename "$VDISK" ".vmdk"`;
                         DNAMEFLAT="$DNAME-flat.vmdk";
-                        printf "\nWorking with $VDISK. Maximum space needed: "; SizeH "$DPATH/$DNAMEFLAT"; echo "";
+                        printf "\nWorking with $VDISK. Maximum space needed: ";
+                        SizeH "$DPATH/$DNAMEFLAT";
+                        echo "";
                         vdf -h "$DPATH";
 
                         # Ask for confirmation
-                        printf "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
+                        printf "\n-- Convert to thin? (y/n): ";
+                        INPUT="0";
+                        read INPUT <&6;
+                        if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ;
+                        then
                             echo "";
 
                             # Rename source
