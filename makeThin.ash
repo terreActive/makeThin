@@ -175,7 +175,7 @@ computeThin () {
 # The comparison is valid once the file is thin provision, otherwise both results are the same.
 
 LOCATION=$1;
-(echo "Thin Thick File"; find "$LOCATION"  -name "*-flat.vmdk" | while read DISK; do paste <(du -h "$DISK" | awk '{print $1}' ) <(du -h --apparent-size "$DISK" ) ; done ) | column -t;
+(echo "Thin Thick File"; find "$LOCATION"  -name "*-flat.vmdk" | while read DISK; do du -h "$DISK" | awk '{print $1}'; du -h --apparent-size "$DISK" ; done ) | column -t;
 echo "";
 (echo -n "Thin:  " ; find "$LOCATION" -name "*-flat.vmdk" -print0 | xargs -0 du -h -c | tail -1 ;  echo -n "Thick: " ; find "$LOCATION" -name "*-flat.vmdk" -print0 | xargs -0 du -h --apparent-size -c | tail -1 ) | column -t;
 }
