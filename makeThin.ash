@@ -35,17 +35,17 @@
 # For that reason some of these functions can not be used in other scripts.
 #
 #==== Auxiliary Functions ====================================================
-SizeH () { ls -lh "$1" | awk  '{ print  $5   }'; }
+SizeH() { ls -lh "$1" | awk  '{ print  $5   }'; }
 #------------------
-isThin () { result=`grep -i thinProvisioned "$1"` ; if [ "$result" = 'ddb.thinProvisioned = "1"' ] ; then echo yes; else echo no; fi; }
+isThin() { result=`grep -i thinProvisioned "$1"` ; if [ "$result" = 'ddb.thinProvisioned = "1"' ] ; then echo yes; else echo no; fi; }
 #------------------
-isBaseDisk () {
+isBaseDisk() {
 # Ensure that the disk is both, base disk (no snapshot) and a virtual disk (not an RDM)
 result=`grep -i parentCID "$1"`;
 result2=`grep -i createType "$1"`;
 if [ "$result" = "parentCID=ffffffff"  -a  "$result2" = 'createType="vmfs"' ] ; then echo "yes"; else echo "no"; fi; }
 #============= cleanupSAFETMP =================================================
-cleanupSAFETMP () {
+cleanupSAFETMP() {
 # Usage: cleanupSAFETMP /path/
 # Find SAFETMP*vmdk files recursively under the path specified and ask you for confirmation before deleting them.
 
@@ -74,7 +74,7 @@ else
 fi;
 }
 #============ findBaseDisks ======================================================
-findBaseDisks () {
+findBaseDisks() {
 # Easy query to find vmdks that have a -flat.vmdk and are supposed to be BaseDisks.
 # Snapshots have a -delta.vmdk supporting the data instead.
 # This only finds Base Disks that have BOTH files, file.vmdk and its file-flat.vmdk
@@ -97,7 +97,7 @@ find $LOCATION -iname "*-flat.vmdk" | while read DISKPATH; do
 done; }
 #============= findAndMakeDiskThin = makeThin ======================================
 alias makeThin=findAndMakeDiskThin ;
-findAndMakeDiskThin () {
+findAndMakeDiskThin() {
 # Usage: findAndMakeDiskThin  /path/
 # It will find Base Disks recursively under the path specified and one by one, convert them to thin provision ONLY if required and ONLY if you confirm the operation.
 # To say YES you just need to press y or Y, without Enter.
