@@ -135,10 +135,6 @@ findAndMakeDiskThin () {
     printf "\nWorking with $VDISK. Maximum space needed: "; SizeH "$DPATH/$DNAMEFLAT"; echo "";
     vdf -h "$DPATH";
 
-    # Verification of locks on file
-    printf "Verify the file is not in use\n"
-    file "$DPATH/$DNAMEFLAT"
-
     # Ask for confirmation
     printf "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
         echo ""; #echo -e "yes do it\n" ;
