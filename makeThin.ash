@@ -56,20 +56,20 @@ if [ "$1" != "" ]; then LOCATION="$*"; else LOCATION="."; fi;
 RESULTLOOKINGTARGETS=`find $LOCATION -name "SAFETMP*vmdk"`;
 # Decide
 if [ "$RESULTLOOKINGTARGETS" = "" ] ; then
-    echo -e "\nNo SAFETMP*vmdk files found under the specified location (default is \".\"). Nothing to clean up. Exiting.\n";
+    printf "\nNo SAFETMP*vmdk files found under the specified location (default is \".\"). Nothing to clean up. Exiting.\n\n";
 else
-    echo -e "\n\tFiles found:";
+    printf "\n\tFiles found:\n";
     echo "$RESULTLOOKINGTARGETS";
-    echo -e "\nDo you want to delete these files?\n";
+    printf "\nDo you want to delete these files?\n\n";
     ANSWER="0";
     printf "Answer (y/n): ";
     read ANSWER;
     if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ] ; then
         find $LOCATION -name "SAFETMP*vmdk" ! -name "*-flat.vmdk" ! -name "*-delta.vmdk" | while read TODELETE ; do
         vmkfstools -U  "$TODELETE" ; done;
-        echo -e "\nDone.\n";
+        printf "\nDone.\n\n";
     else
-        echo -e "\nNothing deleted.\n";
+        printf "\nNothing deleted.\n\n";
     fi;
 fi;
 }
@@ -120,7 +120,7 @@ findAndMakeDiskThin () {
 
     # Check it exists
     if [ ! -e "$VDISK" ]; then echo "$VDISK file not found."; else
-    echo -e "\n-----------------------------------------------------------------------------\n"
+    printf "\n-----------------------------------------------------------------------------\n\n"
 
     # Check that the disk is thin before continuing
     if [ "`isThin \"$VDISK\"`" = "yes" ]; then echo "$VDISK is thinProvisioned, skipping." ; else
@@ -132,15 +132,15 @@ findAndMakeDiskThin () {
     DPATH=`dirname  "$VDISK"`;
     DNAME=`basename "$VDISK" ".vmdk"`;
     DNAMEFLAT="$DNAME-flat.vmdk";
-    echo -en "\nWorking with $VDISK. Maximum space needed: "; SizeH "$DPATH/$DNAMEFLAT"; echo "";
+    printf "\nWorking with $VDISK. Maximum space needed: "; SizeH "$DPATH/$DNAMEFLAT"; echo "";
     vdf -h "$DPATH";
 
     # Verification of locks on file
-    echo -e "Verify the file is not in use"
+    printf "Verify the file is not in use\n"
     file "$DPATH/$DNAMEFLAT"
 
     # Ask for confirmation
-    echo -en "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
+    printf "\n-- Convert to thin? (y/n): "; INPUT="0"; read INPUT <&6;  if [ "$INPUT" = "Y" -o "$INPUT" = "y" ] ; then
         echo ""; #echo -e "yes do it\n" ;
 
         # Rename source
@@ -152,7 +152,7 @@ findAndMakeDiskThin () {
         vmkfstools -i  "$DPATH/SAFETMP$DNAME.vmdk" -d thin  "$VDISK"
 
         # Verify
-        echo -e "\n Visual verification"
+        printf "\n Visual verification\n"
         ls -l "$DPATH/SAFETMP$DNAME.vmdk" "$DPATH/SAFETMP$DNAME-flat.vmdk" "$DPATH/$DNAME.vmdk" "$DPATH/$DNAME-flat.vmdk"
     else
         #echo "DON'T do it" ;
